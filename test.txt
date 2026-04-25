@@ -1,0 +1,35 @@
+#include <avr/io.h>
+#include <util/delay.h>
+
+void outInt(int Int) {
+	for (int i = 0; i < Int; i++) { 
+		PORTB |= (1 << PB0); // RED LED HIGH
+		PORTB |= (1 << PB1); // YELLOW LED HIGH
+		PORTB |= (1 << PB2); // GREEN LED HIGH
+		_delay_ms(500);
+		PORTB &= ~(1 << PB0);
+		PORTB &= ~(1 << PB1);
+		PORTB &= ~(1 << PB2);
+		_delay_ms(500);
+	}
+}
+
+int main(void) {
+	DDRB |= (1 << PB0);	// LED: port as output
+    DDRB |= (1 << PB1);	// LED: port as output
+    DDRB |= (1 << PB2);	// LED: port as output
+				
+	char withBrackets[4] = {'a', 'b', 'c', 'd'};
+	char stringLike[] = "abcd";
+
+	int sizeofBrackets = sizeof(withBrackets);
+	int sizeofString = sizeof(stringLike);
+	
+	while(1) {	
+		//outInt(sizeofBrackets);
+		_delay_ms(2000);
+		outInt(sizeofString);
+	}
+	
+	return 0;
+}
