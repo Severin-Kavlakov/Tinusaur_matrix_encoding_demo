@@ -25,12 +25,17 @@ int encodingValues[totalSymbols][3] = {
 
 int encodedAndEncryptedChars[totalChars][3];
 
-int encryptionKeyMatrix[3][3] = { 
-	{1, 2, 5},
-	{2, 5, 7},
-	{1, 2, 4}
+int phi[3][3] = { 
+	{1,  2, -1},
+	{1,  1,  0},
+	{2,  4, -1}
 };
 
+int psi[3][3] = {
+	{ 1, -1,  3},
+	{-1,  2, -1},
+	{-2,  2, -5}
+}
 
 //-FUNCTIONS---------------------------------------------------------------------------------
 
@@ -60,30 +65,9 @@ int check_message_compatability(char message[]) {
     return (counter == totalChars) ? 1 : 0; //return 0 if incompatible chars found
 }
 
-void encode_and_encrypt_char(char myChar, int out[3]) {
-    //encode
-    int encoded[3];
-	for (int i = 0; i <= totalSymbols-1; i++) {
-		if (myChar == symbols[i]) {
-			encoded[0] = encodingValues[i][0];
-			encoded[1] = encodingValues[i][1];
-			encoded[2] = encodingValues[i][2];
-			break;
-		}
-	}
-
-    //encrypt
-    int temp[3] = {0, 0, 0}; 
-    for (int row = 0; row <= 2; row++) {
-        for (int col = 0; col <= 2; col++) {
-            temp[row] += encryptionKeyMatrix[row][col] * encoded[col];
-        }
-    }
-    for (int i = 0; i <= 2; i++) {
-        int mod = temp[i] % 3;
-        if (mod < 0) {mod += 3;} // account for negatives
-        out[i] = mod + 1;        // from 0..2 to 1..3
-    }
+//custom encrypt funciton
+void multiply_matricies(int m, int n, int p, int matrixA[m][n], int matrixB[n][p]) {
+	
 }
 
 void out_encrypted_char(int encoded[3]) { 
