@@ -3,13 +3,13 @@
 
 
 //-VARIABLES---------------------------------------------------------------------------------
-char message[]   = { "WIP" };
+char message[] = { "WIP" };
 char symbols[] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
 					 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
 					 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ' };
 
 #define totalChars   sizeof(message)-1 // #defined to be known at compile time ; to allow Variable Length Arrays
-#define totalSymbols sizeof(symbols)-1
+#define totalSymbols sizeof(symbols)
 
 int encodingValues[totalSymbols][3] = {
     {1, 1, 1}, {1, 1, 2}, {1, 1, 3},
@@ -31,7 +31,6 @@ int keyMatrix[3][3] = {
 	{1,  1,  0},
 	{2,  4, -1}
 };
-
 int raisedToPower[3][3] = {0};
 
 //-FUNCTIONS---------------------------------------------------------------------------------
@@ -49,9 +48,9 @@ void halt_program(void) {
 	}
 }
 
-int check_message_compatability(char message[]) {
+int check_message_compatability(char message[]) { // check for incompatible chars -> return 0 if found
     int counter=0;
-    for (int i=0; i <= totalChars-1; i++) { //check for incompatible chars
+    for (int i=0; i <= totalChars-1; i++) {
         for (int j=0; j <= totalSymbols-1; j++) {
             if (message[i] == symbols[j]) {
                 counter += 1;
@@ -59,10 +58,10 @@ int check_message_compatability(char message[]) {
             }
         }
     }
-    return (counter == totalChars) ? 1 : 0; //return 0 if incompatible chars found
+    return (counter == totalChars) ? 1 : 0;
 }
 
-void encode_char(char myChar, int encoded[3]) { //halt when found myChar in symbols [i]
+void encode_char(char myChar, int encoded[3]) { // myChar found in symbols [i] -> stop looping when   
 	for (int i=0; i <= totalSymbols-1; i++) {
 		if (myChar == symbols[i]) {
 			encoded[0] = encodingValues[i][0];
@@ -87,11 +86,11 @@ void encrypt_char(int encoded[3], int matrix[3][3], int encrypted[3]) {
 	
 	int mod = 0;
     for (int i=0; i <= 2; i++) {
-        mod = product[i] % 3; 		   // leftover from product/3 
+        mod = product[i] % 3; 	   // leftover from product/3 
         if (mod < 0) { 	  		   
-			mod += 3;			   // if leftover<0    leftover + 3
+			mod += 3;			   // if leftover<0 -> leftover + 3
 		}
-        encrypted[i] = mod + 1;    // add 1			   0..2 -> 1..3
+        encrypted[i] = mod + 1;    // add 1			-> 0..2 -> 1..3
     }
 }
 
@@ -130,25 +129,28 @@ int main(void) {
 		halt_program();
 	}
 	
+	// encode each letter
 	for(int i=0; i <= totalChars-1; i++) {
-		encode_char (/* char* */message[i], 		   encoded  [i]);	
+		encode_char (message[i], encoded[i]);	
 	}
 	
-	//FOR LOOP ; use OUTPUT of raiseToPower() ; loop thru chars in encoded
-	//encrypt_char(/* int*  */encoded[i], keyMatrix, encrypted[i]);
-	for (int i=0; i <= totalChars-1; i++) { // encrypt (multiply) each letter with a matrix, raised to the power of its position in message[]
+	// encrypt (multiply) each letter with a matrix, raised to the power of its position in message[]
+	for (int i=0; i <= totalChars-1; i++) {
 		raise_to_power(keyMatrix, i+1, raisedToPower);
-		
+		encrypt_char(/* int* */encoded[i], raisedToPower, encrypted[i]);
 	}
+	
 	
 	while(1) { 
 	    _delay_ms(3000);
+		
 		for (int i=0; i <= totalChars-1; i++) { // for every encoded char in encodedChars: out to leds
 			out_char(encrypted[i]);
 			_delay_ms(1000);
 		}
+		
 	    _delay_ms(10000);
 	}
-
+	
 	return 0;
 }
