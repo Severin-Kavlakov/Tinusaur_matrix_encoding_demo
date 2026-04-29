@@ -23,8 +23,8 @@ int encodingValues[totalSymbols][3] = {
     {3, 3, 1}, {3, 3, 2}, {3, 3, 3}
 };
 
-int encoded	 [totalChars][3] = {0}; 
-int encrypted[totalChars][3] = {0};
+int encoded	  [totalChars][3] = {0}; 
+int encrypted [totalChars][3] = {0};
 
 int keyMatrix[3][3] = { 
 	{1,  2, -1},
@@ -51,7 +51,7 @@ void halt_program(void) { //BLINK ALL LEDS FOREVER
 }
 
 
-void signal_message_will_repeat(void) { // signal that the message is about to restart, BLINK ALL LEDS ONCE
+void signal_message_will_repeat(void) { // signal that message's about to restart, BLINK ALL LEDS ONCE
 	PORTB |= (1 << PB0);
 	PORTB |= (1 << PB1);
 	PORTB |= (1 << PB2);
@@ -63,7 +63,7 @@ void signal_message_will_repeat(void) { // signal that the message is about to r
 }
 
 
-int check_message_compatability(char message[]) { // check for incompatible chars -> return 0 if found
+int check_message_compatability(char message[]) { // check for incompatible chars -> if found return 0
     int counter=0;
     for (int i=0; i <= totalChars-1; i++) {
         for (int j=0; j <= totalSymbols-1; j++) {
@@ -77,7 +77,7 @@ int check_message_compatability(char message[]) { // check for incompatible char
 }
 
 
-void encode_char(char myChar, int encoded[3]) { // myChar found in symbols [i] -> stop looping when   
+void encode_char(char myChar, int encoded[3]) { // myChar found in symbols [i] -> stop searching
 	for (int i=0; i <= totalSymbols-1; i++) {
 		if (myChar == symbols[i]) {
 			encoded[0] = encodingValues[i][0];
@@ -106,7 +106,7 @@ void raise_to_power(int matrix[3][3], int power, int raisedToPower[3][3]) {
 	
 	int temp[3][3] = {0};
 	
-	// Start with identity matrix
+	// Start with Identity matrix ; same as 1
 	for (int row = 0; row < 3; row++) {
 		for (int col = 0; col < 3; col++) {
 			raisedToPower[row][col] = (row == col) ? 1 : 0;
@@ -189,12 +189,12 @@ int main(void) {
 	
 	// encrypt (multiply) each letter with a matrix, raised to the power of its position in message[]
 	for (int i=0; i <= totalChars-1; i++) {
-		raise_to_power(keyMatrix, i+1, raisedToPower);
-		encrypt_char(/* int* */encoded[i], raisedToPower, encrypted[i]);
+		raise_to_power( keyMatrix,  i+1, 		   raisedToPower );
+		encrypt_char  ( encoded[i], raisedToPower, encrypted[i]  );
 	}
 	
 	
-	while(1) { 
+	for(;;) { 
 	    _delay_ms(3000);
 		
 		for (int i=0; i <= totalChars-1; i++) { // for every encoded char in encodedChars: out to leds
